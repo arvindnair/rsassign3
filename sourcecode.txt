@@ -1,0 +1,633 @@
+package recassign3;
+import java.io.*;
+import java.util.*;
+
+/*Jama Matrix package jar file import*/
+import Jama.Matrix;
+
+
+
+
+
+/*Apache Commons Math 3.3 jar file import*/
+import org.apache.commons.math3.distribution.NormalDistribution;
+
+/*A class for storing the Top N candidate items*/
+class candidate{
+	int item=0;
+	double pred=0.000;
+}
+
+/*Start of class containing main function*/
+ class rec3 {
+	
+	static int users=0;
+	static int items=0;
+	static int ratings=0;
+	static int k=0;
+	static int N=0;
+	static double lambdau=0;
+	static double lambdai=0;
+	static double lambdaj=0;
+	static double HR=0;
+	static double ARHR=0;
+	static double alpha=0;
+	static long startTime1=0;
+	static long endTime1=0;
+	
+	public static void main(String[] args)throws Exception {/*Start of main method*/
+		Scanner sc=new Scanner(new File("train1.txt"));/*Specify the training dataset file here*/
+		int c=0,iconst=0,row=1;
+		
+		String countn=sc.nextLine();
+		String cntemp[]=countn.split(" ");
+		int[] cntemp1=new int[cntemp.length];
+       for(int i=0;i<cntemp.length;i++){
+       	  cntemp1[i]=Integer.parseInt(cntemp[i]);
+        }
+        int[] val=new int[cntemp1[2]];
+		int[] row_ptr=new int[cntemp1[0]+1];
+		int[] col_ind=new int[cntemp1[2]];
+		users=cntemp1[0];
+		items=cntemp1[1];
+		ratings=cntemp1[2];
+		
+	/*	for(int i=0;i<cntemp1.length;i++){
+	   System.out.println("cntemp1: "+cntemp1[i]);
+		} */
+		
+		/*Reading the training dataset into CSR format*/
+		row_ptr[0]=0;
+	while(sc.hasNextLine()){
+		String currentline=sc.nextLine();
+		String sttemp[]=currentline.split(" ");
+		
+		int[] inttemp=new int[sttemp.length];
+        for(int i=0;i<sttemp.length;i++){
+        	inttemp[i]=Integer.parseInt(sttemp[i]);
+        }
+        int[] a=new int[inttemp.length];
+        a=inttemp.clone();
+        for(int i=0;i<a.length;i++){
+        	
+        	if((i%2)==0){
+        	     col_ind[iconst]=a[i];
+        	     }
+        	else{
+        		val[iconst]=a[i];
+        		iconst++;
+        	}
+        
+        }
+        
+        row_ptr[row]=iconst;
+        row++;
+        
+	}
+	
+/*	System.out.println("val: ");
+	for(int i=0;i<val.length;i++){
+	System.out.print(val[i]+" ");
+	}System.out.println();
+	System.out.println("colind: ");
+	for(int i=0;i<col_ind.length;i++){
+		System.out.print(col_ind[i]+" ");
+		}System.out.println();
+		System.out.println("rowptr: ");
+	for(int i=0;i<row_ptr.length;i++){
+		System.out.print(row_ptr[i]+" ");
+		}*/
+
+	
+	/*Read the testing dataset into CSR format*/
+	Scanner sct=new Scanner(new File("test1.txt"));
+	int ct=0,iconstt=0,rowt=1;
+	
+	String countnt=sct.nextLine();
+	String cntempt[]=countnt.split(" ");
+	int[] cntemp1t=new int[cntempt.length];
+   for(int i=0;i<cntempt.length;i++){
+   	  cntemp1t[i]=Integer.parseInt(cntempt[i]);
+    }
+    int[] valt=new int[cntemp1t[2]];
+	int[] row_ptrt=new int[cntemp1t[0]+1];
+	int[] col_indt=new int[cntemp1t[2]];
+/*	for(int i=0;i<cntemp1t.length;i++){
+   System.out.println("cntemp1t: "+cntemp1t[i]);
+	}*/
+	
+	row_ptrt[0]=0;
+while(sct.hasNextLine()){
+	String currentlinet=sct.nextLine();
+	String sttempt[]=currentlinet.split(" ");
+	if(sttempt[0].equals("")){
+	int[] inttempt=new int[sttempt.length-1];
+	int f=1;
+    for(int i=0;i<sttempt.length-1;i++){
+    	inttempt[i]=Integer.parseInt(sttempt[f]);
+    	f++;
+    }
+    f=1;
+    int[] at=new int[inttempt.length];
+    at=inttempt.clone();
+    for(int i=0;i<at.length;i++){
+    	
+    	if((i%2)==0){
+    	     col_indt[iconstt]=at[i];
+    	     
+    	     }
+    	else{
+    		valt[iconstt]=at[i];
+    		iconstt++;
+    	}
+    
+    }
+    
+    row_ptrt[rowt]=iconstt;
+    rowt++;
+	} 
+	else{
+		int[] inttempt=new int[sttempt.length];
+        for(int i=0;i<sttempt.length;i++){
+        	inttempt[i]=Integer.parseInt(sttempt[i]);
+        }
+        int[] at=new int[inttempt.length];
+        at=inttempt.clone();
+        for(int i=0;i<at.length;i++){
+        	
+        	if((i%2)==0){
+        	     col_indt[iconstt]=at[i];
+        	     }
+        	else{
+        		valt[iconstt]=at[i];
+        		iconstt++;
+        	}
+        
+        }
+        
+        row_ptrt[rowt]=iconstt;
+        rowt++;
+	}
+    
+}
+
+/*System.out.println("valt: ");
+for(int i=0;i<valt.length;i++){
+System.out.print(valt[i]+" ");
+}System.out.println();
+System.out.println("colindt: ");
+for(int i=0;i<col_indt.length;i++){
+	System.out.print(col_indt[i]+" ");
+	}System.out.println();
+	System.out.println("rowptrt: ");
+for(int i=0;i<row_ptrt.length;i++){
+	System.out.print(row_ptrt[i]+" ");
+	}*/
+	
+	
+		/*Taking the inputs from user for k and N*/
+		System.out.println("Enter the value of k: ");
+		BufferedReader br1=new BufferedReader(new InputStreamReader(System.in));
+		k=Integer.parseInt(br1.readLine());
+		
+		System.out.println("Enter the value of Top N: ");
+		N=Integer.parseInt(br1.readLine());
+		
+		
+		/*Specifying whether the user can choose to Read P and Q Matrices from or initialize P and Q Matrices*/
+		System.out.println("To enter the choice of whether to -readPQ or -initPQ,");
+		System.out.println("1. Enter 1 for -readPQ");
+		System.out.println("2. Enter 2 for -initPQ");
+		int choice=Integer.parseInt(br1.readLine());
+		
+		double[][] p=new double[users][k];
+		double[][] q=new double[items][k];
+		Matrix P;
+		Matrix Q;
+		
+		if(choice==1){/*User selects to read P and Q Matrices*/
+		System.out.println("Enter the file name for P to be read: ");
+		String filenamep=br1.readLine();
+		Scanner scp=new Scanner(new File(filenamep));      
+		int mcheck=0;/*Used to check if the number of rows in P file matches that of number of users specified in training dataset*/
+		int kcheck=k;/*Used to check of number of columns in each row matches latent dimension k*/
+			
+			while(scp.hasNextLine()){
+				String currentline=scp.nextLine();
+				String sttemp[]=currentline.split(" ");
+				
+				if(mcheck>=users){/*Will display error if P file rows does not match to number of users specified*/
+					System.out.println("The P file provided does not match the m of the mXk dimensions specified.");
+				    break;
+				}
+				if(sttemp.length!=kcheck){/*Will display error if P file columns does not match to latent dimension k specified*/
+					System.out.println("The P file provided does not match the k of the mXk dimensions specified.");
+				break;
+				}
+				double[] dtemp=new double[sttemp.length];
+		        for(int i=0;i<sttemp.length;i++){
+		        	dtemp[i]=Double.parseDouble(sttemp[i]);
+		        }
+		        
+		        double[] a=new double[dtemp.length];
+		        a=dtemp.clone();
+			    
+		       	for(int j=0;j<k;j++){
+						p[mcheck][j]=a[j];
+					}
+					mcheck++;
+			}
+			    P=new Matrix(p);
+			  /*  P.print(1,1);
+			    double s=P.get(0,0);
+			    System.out.println("s: "+s);*/
+			    
+			    int ncheck=0;/*Used to check if the number of rows in Q file matches that of number of items specified in training dataset*/
+			    
+			    System.out.println("Enter the file name for Q to be read: ");
+				String filenameq=br1.readLine();
+			    Scanner scq=new Scanner(new File(filenameq));
+			    while(scq.hasNextLine()){
+					String currentline=scq.nextLine();
+					String sttemp[]=currentline.split(" ");
+					
+					if(ncheck>=items){/*Will display error if Q file rows does not match to number of items specified*/
+						System.out.println("The Q file provided does not match the n of the nXk dimensions specified.");
+					    break;
+					}
+					if(sttemp.length!=kcheck){/*Will display error if Q file columns does not match to latent dimension k specified*/
+						System.out.println("The Q file provided does not match the k of the nXk dimensions specified.");
+					break;
+					}
+					double[] dtemp=new double[sttemp.length];
+			        for(int i=0;i<sttemp.length;i++){
+			        	dtemp[i]=Double.parseDouble(sttemp[i]);
+			        }
+			        
+			        double[] a=new double[dtemp.length];
+			        a=dtemp.clone();
+				    
+			       	for(int j=0;j<k;j++){
+							q[ncheck][j]=a[j];
+						}
+						ncheck++;
+				}
+			    Q=new Matrix(q);
+			 /*   Q.print(1,1);
+			    double s1=Q.get(0,0);
+			    System.out.println("s1: "+s1);*/
+		}            
+		
+		else{/*User selects to initialize P and Q Matrices using normal distribution*/
+				NormalDistribution d=new NormalDistribution(0,0.1);/*Normal Distribution with mean 0 and Standard Deviation 0.1*/
+				for(int i=0;i<cntemp1[0];i++){
+					for(int j=0;j<k;j++){
+						p[i][j]=d.sample();
+					}
+				}
+			    P=new Matrix(p);
+				
+			  /*  P.print(1, 1);
+				double s=P.get(0, 0);
+				System.out.println("s: "+s);*/
+				
+				for(int i=0;i<cntemp1[1];i++){
+					for(int j=0;j<k;j++){
+						q[i][j]=d.sample();
+					}
+				}
+				Q=new Matrix(q);
+				
+			/*	Q.print(1, 1);
+				double s1=Q.get(0, 0);
+				System.out.println("s1: "+s1);*/
+		}
+				
+			    hrarhr(P,Q,col_ind,row_ptr,col_indt);/*Taking HR and ARHR values on the P and Q Matrices as specified in Assignment*/
+			    
+			    /*Taking the input of the values of lambdau, lambdai, lambdaj and alpha from the user*/
+			    System.out.println("Enter the value of lambdau: ");
+			    lambdau=Double.parseDouble(br1.readLine());
+			    
+			    System.out.println("Enter the value of lambdai: ");
+			    lambdai=Double.parseDouble(br1.readLine());
+			    
+			    System.out.println("Enter the value of lambdaj: ");
+			    lambdaj=Double.parseDouble(br1.readLine());
+			    
+			    System.out.println("Enter the value of alpha: ");
+			    alpha=Double.parseDouble(br1.readLine());
+			    
+			    /*Multiply lambdau, lambdai, lambdaj by 2 for the equation*/
+			    double lambdau2=2*lambdau;
+			    double lambdai2=2*lambdai;
+			    double lambdaj2=2*lambdaj;
+			    
+			    /*Specify the input file path for samples.txt file provided*/
+			    Scanner sample=new Scanner(new File("samples_ml100k_0.02_0.005_0.005_0.005_k25.txt"));
+			    
+			    
+			    startTime1=System.currentTimeMillis();/*Starting the timer for the learning*/
+			    int ns=0;/*Using ns counter for determining when to calculate HR and ARHR values*/
+			    while(sample.hasNextLine()){/*Reading line by line of the samples file*/
+			    	ns++;
+			    	String currentline=sample.nextLine();
+					Scanner cline=new Scanner(currentline);
+				       int us,is,js;
+				       us=cline.nextInt();
+				       is=cline.nextInt();
+				       js=cline.nextInt();
+				       
+				       /*Starting calculations for Pu, Qi and Qj updation*/
+				       double[][] putemp=new double[1][k];
+					   double[][] qitemp=new double[1][k];
+					   double[][] qjtemp=new double[1][k];
+				       
+					   for(int i=0;i<k;i++){
+						   putemp[0][i]=P.get(us,i);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   qitemp[0][i]=Q.get(is,i);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   qjtemp[0][i]=Q.get(js,i);
+					   }
+					   
+					   /*ruij calculation*/
+					   double rui,ruj;
+					   rui=0;
+					   ruj=0;
+					   
+					   for(int i=0;i<k;i++){
+						   rui=rui+(putemp[0][i]*qitemp[0][i]);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   ruj=ruj+(putemp[0][i]*qjtemp[0][i]);
+					   }
+					   
+					   double ruij=rui-ruj;
+					   
+					   /*Passing ruij to sigmoid function as specified in assignment*/
+					   double sigval=sigmoid(ruij);
+					   
+					   /*Subtracting by 1 for calculation of equation in Pu*/
+					   /*Updating Pu*/
+					   double sigvalm1=sigval-1;
+					   
+					   double qimqjtemp=0;
+					   double[][] sigmlqimqjtemp=new double[1][k];
+					   for(int i=0;i<k;i++){
+						   qimqjtemp=qitemp[0][i]-qjtemp[0][i];
+					       sigmlqimqjtemp[0][i]=sigvalm1*qimqjtemp;
+					       }
+					   
+					   double[][] derivp=new double[1][k];
+					   for(int i=0;i<k;i++){
+						   
+					       derivp[0][i]=sigmlqimqjtemp[0][i]+(lambdau2*putemp[0][i]);
+					       putemp[0][i]=putemp[0][i]-(alpha*derivp[0][i]);
+					   }
+					   
+					   /*update Qi*/
+					   /*Calculating ruij as Pu has changed*/
+					   rui=0;
+					   ruj=0;
+					   for(int i=0;i<k;i++){
+						   rui=rui+(putemp[0][i]*qitemp[0][i]);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   ruj=ruj+(putemp[0][i]*qjtemp[0][i]);
+					   }
+					   ruij=rui-ruj;
+					   sigval=sigmoid(ruij);
+					   sigvalm1=sigval-1;
+					   
+					   double[][] sigmlputemp=new double[1][k];
+					   for(int i=0;i<k;i++){
+						   sigmlputemp[0][i]=sigvalm1*putemp[0][i];
+					   }
+					   
+					   double[][] derivqi=new double[1][k];
+					   for(int i=0;i<k;i++){
+						   derivqi[0][i]=sigmlputemp[0][i]+(lambdai2*qitemp[0][i]);
+						   qitemp[0][i]=qitemp[0][i]-(alpha*derivqi[0][i]);
+					   }
+					   
+					   /*update Qj*/
+					   rui=0;
+					   ruj=0;
+					   for(int i=0;i<k;i++){
+						   rui=rui+(putemp[0][i]*qitemp[0][i]);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   ruj=ruj+(putemp[0][i]*qjtemp[0][i]);
+					   }
+					   ruij=rui-ruj;
+					   sigval=sigmoid(ruij);
+					   sigvalm1=sigval-1;
+					   
+					   double[][] sigmlputemp1=new double[1][k];
+					   for(int i=0;i<k;i++){
+						   sigmlputemp1[0][i]=sigvalm1*(-putemp[0][i]);
+					   }
+					   
+					   double[][] derivqj=new double[1][k];
+					   for(int i=0;i<k;i++){
+						   derivqj[0][i]=sigmlputemp1[0][i]+(lambdaj2*qjtemp[0][i]);
+						   qjtemp[0][i]=qjtemp[0][i]-(alpha*derivqj[0][i]);
+					   }
+					   
+					   /*update in Matrix P and Q now*/
+					   /*The arrays were updated but for speed we update in the Matrices at the end as we do not have to read and write repeatedly*/
+					   for(int i=0;i<k;i++){
+						   double temp=putemp[0][i];
+						   P.set(us,i,temp);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   double temp=qitemp[0][i];
+						   Q.set(is,i,temp);
+					   }
+					   
+					   for(int i=0;i<k;i++){
+						   double temp=qjtemp[0][i];
+						   Q.set(js,i,temp);
+					   }
+					   if(ns%1000000==1){
+						   System.out.println("ns: "+ns);
+					   }
+					   
+					   /*Calculate HR and ARHR when the condition is met as specified in the assignment*/
+					   if(ns%(ratings*100)==1){
+						   hrarhr(P,Q,col_ind,row_ptr,col_indt);   
+						   startTime1=System.currentTimeMillis();/*For next HR and ARHR learning*/
+					   }
+					   
+			    }
+			   
+				
+			    
+		}
+	
+	/*Sigmoid Function*/
+	public static double sigmoid(double x){
+		double ruijt=-x;
+		double a=Math.exp(ruijt)+1;
+		double b=1/a;
+		return b;
+	}
+	
+	/*Function which calculates the HR and ARHR when called*/
+	public static void hrarhr(Matrix Pt,Matrix Qt,int[] col_ind,int[] row_ptr, int[] col_indt) throws IOException{
+		int hits=0;
+	    double rank=0;
+		Matrix Pt1=Pt;
+		Matrix Qt1=Qt;
+		
+		double[] pt1=new double[k];
+		double[] qt1=new double[k];
+		double pqt1=0;
+		
+		for(int i=0;i<users;i++){//users loop
+			int[] tempitems=new int[row_ptr[i+1]-row_ptr[i]];
+			int c1=0;
+			
+			for(int j=row_ptr[i];j<row_ptr[i+1];j++){
+			tempitems[c1]=col_ind[j];
+			c1++;
+			}
+			Arrays.sort(tempitems);
+			candidate[] cand=new candidate[items];
+			for(int c2=0;c2<cand.length;c2++){
+     		   cand[c2]=new candidate();
+     	    }
+			int c3=0;
+			for(int j=0;j<items;j++){
+				boolean checkitem=false;
+				for(int ch=0;ch<tempitems.length&&(j+1)<=tempitems[ch];ch++){
+					if((j+1)==tempitems[ch]){
+						checkitem=true;
+						break;
+					}
+				}
+				
+				if(checkitem==false){
+				for(int c2=0;c2<k;c2++){
+					pt1[c2]=Pt1.get(i, c2);
+				}
+				
+				int titem=j;
+				for(int c2=0;c2<k;c2++){
+					qt1[c2]=Qt1.get(titem, c2);
+				}
+			
+				
+				for(int c2=0;c2<k;c2++){
+					pqt1=pqt1+(pt1[c2]*qt1[c2]);
+				}
+				cand[c3].item=j+1;
+				cand[c3].pred=pqt1;
+				c3++;
+				pqt1=0;
+				}//check if
+				
+				
+			}//j loop for items of a user
+			
+			    sort(cand);
+			    int itemtest=col_indt[i];
+			    for(int c2=0;c2<N;c2++){
+			    	if(itemtest==cand[c2].item){
+			    		hits++;
+			    		rank=rank+(1/(1+c2));
+			    	    break;
+			    	}
+			    	
+			    }
+			    
+			}
+		HR=(double)hits/users;
+		ARHR=(double)rank/users;
+	
+		/*System.out.println("HR is: "+HR);
+		System.out.println("ARHR is: "+ARHR);*/
+		
+	
+		    endTime1=System.currentTimeMillis();/*end timer for the learning*/
+			float sec1=0;
+			sec1=(endTime1-startTime1)/1.0f;
+			String training_timestr=String.format("%.2f", sec1);
+			float training_time=Float.parseFloat(training_timestr); 
+		
+			/*Printing out the necessary values as specified in the Assignment*/
+			System.out.println("Learning time= "+training_time+" ms, "+"k= "+k+", "+"alpha= "+alpha+", "+"lambdau= "+lambdau+", "+"lambdai= "+lambdai+", "+"lambdaj= "+lambdaj+", "+"HR= "+HR+", "+"ARHR= "+ARHR);
+			
+		return;
+	}
+	
+	/*Function which sorts the candidate set items for Top N values using Merge Sort for speed*/
+	public static void sort(candidate[] cand1){
+        candidate []tempArray = new candidate[cand1.length];
+        for(int k=0;k<cand1.length;k++){
+ 		   tempArray[k]=new candidate();
+ 	   }
+		  mergeSort(tempArray,0,cand1.length-1,cand1);
+       return;
+	  }
+		      public static void mergeSort(candidate[] tempArray,int lowerIndex,int upperIndex,candidate[] cand1){
+		          if(lowerIndex == upperIndex){
+		              return;
+		          }
+		          else{
+		              int mid = (lowerIndex+upperIndex)/2;
+		              mergeSort(tempArray, lowerIndex, mid, cand1);
+		              mergeSort(tempArray, mid+1, upperIndex, cand1);
+		              merge(tempArray,lowerIndex,mid+1,upperIndex,cand1);
+		              }
+		          }
+		      public static void merge(candidate[] tempArray,int lowerIndexCursor,int higherIndex,int upperIndex, candidate[] cand1){
+		          int tempIndex=0;
+		          int lowerIndex = lowerIndexCursor;
+		          int midIndex = higherIndex-1;
+		          int totalItems = upperIndex-lowerIndex+1;
+		          while(lowerIndex <= midIndex && higherIndex <= upperIndex){
+		              if(cand1[lowerIndex].pred > cand1[higherIndex].pred){
+		                  tempArray[tempIndex].pred = cand1[lowerIndex].pred;
+		                  tempArray[tempIndex].item = cand1[lowerIndex].item;
+		                  lowerIndex++;
+		                  tempIndex++;
+                    }
+		              else{
+		                  tempArray[tempIndex].pred = cand1[higherIndex].pred;
+		                  tempArray[tempIndex].item = cand1[higherIndex].item;
+		                  higherIndex++;
+		                  tempIndex++;
+		              }
+		          }
+		          while(lowerIndex <= midIndex){
+		              tempArray[tempIndex].pred = cand1[lowerIndex].pred;
+		              tempArray[tempIndex].item = cand1[lowerIndex].item;
+		              tempIndex++;
+		              lowerIndex++;
+		          }
+		          while(higherIndex <= upperIndex){
+		              tempArray[tempIndex].pred = cand1[higherIndex].pred;
+		              tempArray[tempIndex].item = cand1[higherIndex].item;
+		              tempIndex++;
+		              higherIndex++;
+		          }
+		          for(int i=0;i<totalItems;i++){
+		              cand1[lowerIndexCursor+i].pred = tempArray[i].pred;
+		              cand1[lowerIndexCursor+i].item= tempArray[i].item;
+		          }
+		      }
+	
+		
+	}
+
+

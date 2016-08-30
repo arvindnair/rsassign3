@@ -1,0 +1,41 @@
+Learning time= 1.41697234E12 ms, k= 25, alpha= 0.0, lambdau= 0.0, lambdai= 0.0, lambdaj= 0.0, HR= 0.007423117709437964, ARHR= 0.0010604453870625664
+
+Learning time= 284.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.007423117709437964, ARHR= 0.0010604453870625664
+
+Learning time= 232257.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11240721102863202, ARHR= 0.015906680805938492
+
+Learning time= 229293.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11983032873807, ARHR= 0.02014846235418876
+
+Learning time= 229460.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.10392364793213149, ARHR= 0.019088016967126194
+
+Learning time= 228779.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11240721102863202, ARHR= 0.02014846235418876
+
+Learning time= 228849.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11770943796394485, ARHR= 0.018027571580063628
+
+Learning time= 229030.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.10604453870625663, ARHR= 0.018027571580063628
+
+Learning time= 228875.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11770943796394485, ARHR= 0.015906680805938492
+
+Learning time= 228717.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.1102863202545069, ARHR= 0.019088016967126194
+
+Learning time= 229565.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.1102863202545069, ARHR= 0.02014846235418876
+
+Learning time= 228702.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.1102863202545069, ARHR= 0.022269353128313893
+
+Learning time= 229048.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11134676564156946, ARHR= 0.014846235418875928
+
+Learning time= 228822.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.09862142099681867, ARHR= 0.013785790031813362
+
+Learning time= 228664.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.10816542948038176, ARHR= 0.018027571580063628
+
+Learning time= 228725.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11558854718981973, ARHR= 0.019088016967126194
+
+Learning time= 228775.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11240721102863202, ARHR= 0.021208907741251327
+
+Learning time= 229288.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11558854718981973, ARHR= 0.018027571580063628
+
+Learning time= 229165.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11240721102863202, ARHR= 0.015906680805938492
+
+Learning time= 230392.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11770943796394485, ARHR= 0.015906680805938492
+
+Learning time= 229710.0 ms, k= 25, alpha= 0.02, lambdau= 0.005, lambdai= 0.005, lambdaj= 0.005, HR= 0.11240721102863202, ARHR= 0.012725344644750796
